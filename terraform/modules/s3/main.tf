@@ -47,11 +47,16 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "encryption" {
 
 # Uploading website
 resource "aws_s3_object" "website_files" {
-  for_each     = var.website_files
-  bucket       = aws_s3_bucket.origin_bucket.id
-  key          = each.value
-  source       = "${var.website_path}/${each.value}"
-  content_type = "text/html"
+  for_each = var.website_files
+  bucket   = aws_s3_bucket.origin_bucket.id
+  key      = each.value
+  source   = "${var.website_path}/${each.value}"
+  
+  content_type = lookup(
+    local.content_types,
+    lower(split(".", each.value)[1]),
+    "application/octet-stream"
+  )
 }
 
 

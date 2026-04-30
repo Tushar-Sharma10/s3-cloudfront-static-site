@@ -65,3 +65,48 @@ variable "cloudfront_default_certificate" {
   type        = bool
   default     = true
 }
+
+variable "oac_name" {
+  type        = string
+  description = "A name that identifies the Origin Access Control."
+  default     = "s3-oac"
+}
+
+variable "oac_description" {
+  type        = string
+  description = "The description of the Origin Access Control."
+  default     = "Managed by Terraform"
+}
+
+variable "origin_access_control_origin_type" {
+  type        = string
+  description = "The type of origin that this Origin Access Control is for."
+  default     = "s3"
+
+  validation {
+    condition     = contains(["lambda", "mediapackagev2", "mediastore", "s3"], var.origin_access_control_origin_type)
+    error_message = "Valid values are lambda, mediapackagev2, mediastore, and s3"
+  }
+}
+
+variable "signing_behavior" {
+  description = "Specifies which requests CloudFront signs."
+  type        = string
+  default     = "always"
+
+  validation {
+    condition     = contains(["always", "never", "no-override"], var.signing_behavior)
+    error_message = "Vaild values must be always, never or no-override"
+  }
+}
+
+variable "signing_protocol" {
+  description = "Determines how CloudFront signs (authenticates) requests."
+  type        = string
+  default     = "sigv4"
+
+  validation {
+    condition     = contains(["sigv4"], var.signing_protocol)
+    error_message = "The only valid value is sigv4"
+  }
+}
